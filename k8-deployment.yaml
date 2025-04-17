@@ -15,7 +15,7 @@ spec:
     spec: 
       containers:
       - name: housing-prediction-ml
-        image: 
+        image: kaushiktd/housing_prediction
         resources:
           limits:
             memory: "256Mi"

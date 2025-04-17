@@ -10,7 +10,7 @@ from fastapi import APIRouter, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 
-from app.api import api_router
+from app.housing_api import api_router
 from app.config import settings
 
 app = FastAPI(
@@ -53,7 +53,4 @@ if settings.BACKEND_CORS_ORIGINS:
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001) 
-
-    ## localhost--> 127.0.0.0
-    ## host --> 0.0.0.0 allows all host
+    uvicorn.run(app, host="0.0.0.0", port=9001) 

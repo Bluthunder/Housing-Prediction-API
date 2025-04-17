@@ -1,14 +1,14 @@
 from typing import Any, List, Optional, Union
 import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PredictionResults(BaseModel):
     errors: Optional[Any]
     version: str
     #predictions: Optional[List[int]]
-    predictions: Optional[int]
+    predictions: Optional[float]
 
 class DataInputSchema(BaseModel):
     Id: int
@@ -17,7 +17,7 @@ class DataInputSchema(BaseModel):
     LotFrontage: Optional[float]
     LotArea: int
     Street: str
-    Alley: Optional[str]
+    Alley: Optional[str] = None
     LotShape: str
     LandContour: str
     Utilities: str
@@ -83,9 +83,9 @@ class DataInputSchema(BaseModel):
     ThreeSsnPorch: int = Field(..., alias='3SsnPorch')
     ScreenPorch: int
     PoolArea: int
-    PoolQC: Optional[str]
-    Fence: Optional[str]
-    MiscFeature: Optional[str]
+    PoolQC: Optional[str] = None
+    Fence: Optional[str] = None
+    MiscFeature: Optional[str] = None
     MiscVal: int
     MoSold: int
     YrSold: int

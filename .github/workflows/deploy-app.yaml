@@ -1,0 +1,45 @@
+name: Deploy Docker to EC2
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials (OIDC)
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::008971663545:role/deploy-role
+        aws-region: us-east-1
+
+    - name: Get EC2 IP from SSM
+      run: |
+        IP=$(aws ssm get-parameter --name "ec2-public-ip" --query "Parameter.Value" --output text)
+        echo "EC2_IP=$IP" >> $GITHUB_ENV
+
+    - name: Get SSH Private Key from SSM
+      run: |
+        aws ssm get-parameter \
+          --name "ec2-ssh-private-key" \
+          --with-decryption \
+          --query "Parameter.Value" \
+          --output text > private_key.pem
+        chmod 600 private_key.pem
+
+    - name: Deploy Docker app on EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no -i private_key.pem ubuntu@$EC2_IP << 'EOF'
+          docker stop housing_pred_api || true
+          docker rm housing_pred_api || true
+          docker pull kaushiktd/housing_prediction
+          docker run -d --name housing_pred_api -p 7001:7001 kaushiktd/housing_prediction:latest
+        EOF
